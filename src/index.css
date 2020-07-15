@@ -11,3 +11,22 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.bg-gray{
+  background-color: #d1dcea;
+}
+
+.task-enter{
+  opacity: 0;
+}
+.task-enter-active{
+  opacity: 1;
+  transition: opacity 500ms;
+}
+.task-exit{
+  opacity: 1;
+}
+.task-exit-active{
+  opacity: 0;
+  transition: opacity 500ms;
+}
