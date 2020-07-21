@@ -1,7 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import AlertsContext from '../../context/alerts/alertsContext';
+import AuthContext from '../../context/auth/authContext';
 
-const Signup = () => {
+const Signup = (props) => {
+
+    const authContext = useContext(AuthContext);
+    const { message, auth, signup } = authContext;
+
+    const alertContexts = useContext(AlertsContext);
+    const { alert, showAlert } = alertContexts;
+
+    useEffect(()=>{
+
+        if(auth){
+            props.history.push('/proyects');
+        }
+
+        if(message){
+            showAlert(message.msg, message.category);
+        }
+        // eslint-disable-next-line
+    },[message, auth, props.history])
     
     const [ user, setUser ] = useState({
         name: '',
@@ -21,6 +41,27 @@ const Signup = () => {
 
     const handleSubmit = e =>{
         e.preventDefault();
+
+        if(name.trim() === '' || email.trim() === '' || password.trim() === '' || repassword.trim() === ''){
+            showAlert('All fields are required', 'danger');
+            return;
+        }
+
+        if(password.length < 6){
+            showAlert('Password must be at least 6 characters', 'danger')
+            return;
+        }
+
+        if(password !== repassword){
+            showAlert('Passwords do not match', 'danger')
+            return;
+        }
+
+        signup({
+            name,
+            email,
+            password
+        })
     }
 
     return (
@@ -28,6 +69,7 @@ const Signup = () => {
             <div className="row justify-content-center min-vh-100 align-items-center">
                 <div className="col-6">
                     <div className="card">
+                        {alert ? <div className={`alert alert-${alert.category}`}>{alert.msg}</div> : null }
                         <div className="card-body">
                             <h3 className="text-center font-weight-bold">Signup</h3>
                             <form

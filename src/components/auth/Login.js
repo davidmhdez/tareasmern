@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom'
+import AuthContext from '../../context/auth/authContext';
+import AlertsContext from '../../context/alerts/alertsContext';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Login = () => {
+const Login = (props) => {
+
+    const authContext = useContext(AuthContext);
+    const { auth, message, login } = authContext;
+
+    const alertContexts = useContext(AlertsContext);
+    const { alert, showAlert } = alertContexts;
 
     const [ user, setUser ] = useState({
         email: '',
@@ -19,13 +28,33 @@ const Login = () => {
 
     const handleSubmit = e =>{
         e.preventDefault();
+
+        if(email.trim() === '' || password.trim() === ''){
+            showAlert('All fields are required', 'danger');
+            return;
+        }
+
+        login(user);
     }
 
+    useEffect(()=>{
+
+        if(auth){
+            props.history.push('/proyects');
+        }
+
+        if(message){
+            showAlert(message.msg, message.category);
+        }
+        // eslint-disable-next-line
+    },[message])
+
     return (
-        <div className="container-fluid bg-dark">
+        <div className="container-fluid bg-dark">            
             <div className="row justify-content-center min-vh-100 align-items-center">
                 <div className="col-6">
                     <div className="card">
+                        {alert ? <div className={`alert alert-${alert.category}`}>{alert.msg}</div> : null }
                         <div className="card-body">
                             <h3 className="text-center font-weight-bold">Login</h3>
                             <form

@@ -21,12 +21,12 @@ code {
 }
 .task-enter-active{
   opacity: 1;
-  transition: opacity 500ms;
+  transition: opacity 200ms;
 }
 .task-exit{
   opacity: 1;
 }
 .task-exit-active{
   opacity: 0;
-  transition: opacity 500ms;
+  transition: opacity 200ms;
 }

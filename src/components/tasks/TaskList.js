@@ -22,12 +22,23 @@ const TaskList = () => {
             <h4 className="text-center font-weight-bold">Proyect: {currentProyect.name}</h4>
             <ul className="list-unstyled mt-5">
                 {tasks.length === 0 
-                    ? <li><p>There are not tasks</p></li> 
+                    ? 
+                    <TransitionGroup>
+                        <CSSTransition                            
+                            timeout={500}
+                            classNames="task"
+                        >
+                            <li className="card p-2">
+                                <p className="mb-0 text-center">There are not tasks</p>
+                            </li> 
+                        </CSSTransition>
+                    </TransitionGroup>
+                    
                     : 
                         <TransitionGroup>
                             {tasks.map( task => (
                                 <CSSTransition
-                                    key={task.id}
+                                    key={task._id}
                                     timeout={500}
                                     classNames="task"
                                 >
@@ -42,7 +53,7 @@ const TaskList = () => {
             <button
                 type="button"
                 className="btn btn-light"
-                onClick={()=> deleteProyect(currentProyect.id)}
+                onClick={()=> deleteProyect(currentProyect._id)}
             >
                 Delete proyect &times;
             </button>

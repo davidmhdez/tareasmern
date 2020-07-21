@@ -1,4 +1,4 @@
-import { PROYECT_FORM,GET_PROYECTS, ADD_PROYECTS, VALIDATE_FORM, CURRENT_PROYECT, DELETE_PROYECT } from "../../types"
+import { PROYECT_FORM,GET_PROYECTS, ADD_PROYECTS, VALIDATE_FORM, CURRENT_PROYECT, DELETE_PROYECT, ERROR_PROYECT } from "../../types"
 
 
 export default (state, action) => {
@@ -28,13 +28,18 @@ export default (state, action) => {
         case CURRENT_PROYECT:
             return {
                 ...state,
-                proyect: state.proyects.filter( proyect => proyect.id === action.payload)
+                proyect: state.proyects.filter( proyect => proyect._id === action.payload)
             }
         case DELETE_PROYECT:
             return {
                 ...state,
-                proyects: state.proyects.filter( proyect => proyect.id !== action.payload),
+                proyects: state.proyects.filter( proyect => proyect._id !== action.payload),
                 proyect: null
+            }
+        case ERROR_PROYECT:
+            return {
+                ...state,
+                message: action.payload
             }
         default:
             return state

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import proyectContext from '../../context/proyects/proyectContext';
 import TaskContext from '../../context/tasks/taskContext';
 
@@ -7,7 +7,7 @@ const TaskForm = () => {
     const proyectsContext = useContext(proyectContext);
     const { proyect } = proyectsContext;
     const tasksContext = useContext(TaskContext);
-    const { addTask, taskError, validateTask, getTasks } = tasksContext;
+    const { selectedTask, addTask, taskError, validateTask, getTasks, switchTask, getCurrentTask } = tasksContext;
 
     const [ task, setTask ] = useState({
         name: ''
@@ -27,15 +27,31 @@ const TaskForm = () => {
             validateTask();
             return;
         }
-        
-        task.proyectId = proyect[0].id;
-        task.state= false;
-        addTask(task);
-        getTasks(proyect[0].id);
+
+        if(selectedTask === null){
+            task.proyect = proyect[0]._id;
+            task.state= false;
+            addTask(task);
+        }else{
+            switchTask(task);
+            getCurrentTask(null);
+        }
+                
+        getTasks(proyect[0]._id);
         setTask({
             name: ''
         })
     }
+
+    useEffect(()=>{
+        if(selectedTask !== null){
+            setTask(selectedTask);
+        }else{
+            setTask({
+                name: ''
+            })
+        }
+    },[selectedTask])
 
     if(proyect === null) return null;
 
@@ -58,7 +74,7 @@ const TaskForm = () => {
                     <input
                         type="submit"
                         className="btn btn-block btn-secondary" 
-                        value="Add task"
+                        value={ selectedTask != null ? 'Update task': 'Add task' }
                     />
                 </div>
             </form>

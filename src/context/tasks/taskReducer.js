@@ -1,5 +1,4 @@
-import { act } from "react-dom/test-utils";
-import { GET_TASKS, ADD_TASK, VALIDATE_TASK, DELETE_TASK } from "../../types";
+import { GET_TASKS, ADD_TASK, VALIDATE_TASK, DELETE_TASK, SWITCH_TASK, CURRENT_TASK } from "../../types";
 
 
 export default (state, action) =>{
@@ -7,12 +6,12 @@ export default (state, action) =>{
         case GET_TASKS:
             return {
                 ...state,
-                tasksProyect: state.tasks.filter(task => task.proyectId === action.payload )
+                tasksProyect: action.payload
             }
         case ADD_TASK:
             return {
                 ...state,
-                tasks: [...state.tasks, action.payload],
+                tasksProyect: [...state.tasksProyect, action.payload],
                 taskError: false
             }
         case VALIDATE_TASK:
@@ -23,7 +22,17 @@ export default (state, action) =>{
         case DELETE_TASK:
             return {
                 ...state,
-                tasks: state.tasks.filter( task => task.id !== action.payload )
+                tasksProyect: state.tasksProyect.filter( task => task._id !== action.payload )
+            }
+        case SWITCH_TASK:
+            return {
+                ...state,
+                tasksProyect: state.tasksProyect.map( task => task._id === action.payload._id ? action.payload : task )
+            }
+        case CURRENT_TASK:
+            return {
+                ...state,
+                selectedTask: action.payload
             }
         default:
             return state;

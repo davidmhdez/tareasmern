@@ -1,45 +1,41 @@
 import React, { useReducer } from 'react';
 import TaskContext from './taskContext';
 import taskReducer from './taskReducer';
-import { GET_TASKS, ADD_TASK, VALIDATE_TASK, DELETE_TASK } from '../../types';
-import { v4 as uuidv4 } from 'uuid';
+import { GET_TASKS, ADD_TASK, VALIDATE_TASK, DELETE_TASK, SWITCH_TASK, CURRENT_TASK } from '../../types';
+import ax from '../../config/axios';
 
 const TaskState = (props) => {
 
-    // const tasks = [
-    //     {name: 'Design styles', state: true, proyectId: 1},
-    //     {name: 'Develop system', state: true,proyectId: 1},
-    //     {name: 'Document test cases', state: false,proyectId: 2},
-    //     {name: 'Implement system', state: false, proyectId: 3}                
-    // ]
-
-    const initialState = {
-        // tasks: []
-        tasks: [
-            {id: 1,name: 'Design styles', state: true, proyectId: 1},
-            {id: 2, name: 'Develop system', state: true,proyectId: 1},
-            {id: 3, name: 'Document test cases', state: false,proyectId: 2},
-            {id: 4, name: 'Implement system', state: false, proyectId: 3}                
-        ],
-        tasksProyect: null,
-        taskError: false
+    const initialState = {        
+        tasksProyect: [],
+        taskError: false,
+        selectedTask: null
     }
 
     const [ state, dispatch ] = useReducer(taskReducer, initialState);
 
-    const getTasks = id =>{
-        dispatch({
-            type: GET_TASKS,
-            payload: id
-        })
+    const getTasks = async id =>{        
+        try {
+            const response = await ax.get('/api/tasks', { params: {proyect: id} });            
+            dispatch({
+                type: GET_TASKS,
+                payload: response.data
+            })
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    const addTask = task =>{
-        task.id = uuidv4();
-        dispatch({
-            type: ADD_TASK,
-            payload: task
-        })
+    const addTask = async task =>{
+        try {
+            const response = await ax.post('/api/tasks', task);            
+            dispatch({
+                type: ADD_TASK,
+                payload: response.data
+            })
+        } catch (error) {
+            console.log(error.data);
+        }
     }
 
     const validateTask = () =>{
@@ -48,23 +44,50 @@ const TaskState = (props) => {
         })
     }
 
-    const deleteTask = id =>{
+    const deleteTask = async (id, proyect )=>{
+        try {
+            await ax.delete(`/api/tasks/${id}`, {params: { proyect }});
+            dispatch({
+                type: DELETE_TASK,
+                payload: id
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const switchTask = async task =>{
+        try {
+            const response = await ax.put(`/api/tasks/${task._id}`, task);
+            console.log(response);
+            dispatch({
+                type: SWITCH_TASK,
+                payload: task
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getCurrentTask = task =>{
         dispatch({
-            type: DELETE_TASK,
-            payload: id
+            type: CURRENT_TASK,
+            payload: task
         })
     }
 
     return (
         <TaskContext.Provider
-            value={{
-                tasks: state.tasks,
+            value={{                
                 tasksProyect: state.tasksProyect,
                 taskError: state.taskError,
+                selectedTask: state.selectedTask,
                 getTasks,
                 addTask,
                 validateTask,
-                deleteTask
+                deleteTask, 
+                switchTask,
+                getCurrentTask
             }}
         >
             {props.children}

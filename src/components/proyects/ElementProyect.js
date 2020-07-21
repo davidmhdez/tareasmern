@@ -20,7 +20,7 @@ const ElementProyect = ({proyect}) => {
             <button 
                 type="button"
                 className="btn btn-transparent"
-                onClick={()=> handleClick(proyect.id)}
+                onClick={()=> handleClick(proyect._id)}
             >
                 {proyect.name}
             </button>

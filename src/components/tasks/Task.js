@@ -5,14 +5,23 @@ import proyectContext from '../../context/proyects/proyectContext';
 const Task = ({task}) => {
 
     const tasksContext = useContext(TaskContext);
-    const { deleteTask, getTasks } = tasksContext;
+    const { deleteTask, getTasks, switchTask, getCurrentTask } = tasksContext;
 
     const proyectsContext = useContext(proyectContext);
     const { proyect } = proyectsContext
 
     const handleDelete = () =>{
-        deleteTask(task.id);
-        getTasks(proyect[0].id);
+        deleteTask(task._id, proyect[0]._id);
+        getTasks(proyect[0]._id);
+    }
+
+    const handleChangeStatus = task =>{
+        task.state = !task.state;
+        switchTask(task);
+    }
+
+    const handleUpdate = task =>{
+        getCurrentTask(task)
     }
 
     return (
@@ -20,11 +29,12 @@ const Task = ({task}) => {
             <p className="mb-0">{task.name}</p>            
             <div className="d-flex align-items-center">
             {task.state 
-                ? <button type="button" className="badge badge-success badge-pill border-0 mr-2" >Done</button>
-                : <button type="button" className="badge badge-danger badge-pill border-0 mr-2" >To do</button>}
+                ? <button type="button" onClick={() => handleChangeStatus(task) } className="badge badge-success badge-pill border-0 mr-2" >Done</button>
+                : <button type="button" onClick={() => handleChangeStatus(task) } className="badge badge-danger badge-pill border-0 mr-2" >To do</button>}
                 <button 
                     type="button"
                     className="btn btn-sm btn-dark mr-2"
+                    onClick={() => handleUpdate(task) }
                 >
                     Update
                 </button>
